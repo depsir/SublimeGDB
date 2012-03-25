@@ -1149,8 +1149,8 @@ class GdbLaunch(sublime_plugin.WindowCommand):
         global gdb_run_status
         if gdb_process == None or gdb_process.poll() != None:
             os.chdir(get_setting("workingdir", "/tmp"))
-            commandline = get_setting("commandline")
-            gdb_process = subprocess.Popen(commandline, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+            executable = get_setting("executable")
+            gdb_process = subprocess.Popen(["gdb","--interpreter=mi",executable], shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 
             w = sublime.active_window()
             w.set_layout(
