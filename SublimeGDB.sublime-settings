@@ -5,23 +5,13 @@
     //
     // "settings":
     // {
+    //      "sublimegdb_sourcedir": "/path/to/your/project/source",
     //      "sublimegdb_workingdir": "/path/to/your/project",
-    //      "sublimegdb_commandline":
-    //      [
-    //          "gdb",
-    //          "--interpreter=mi", // NOTE: This MUST be here for the plugin to work
-    //          "./your_executable_name"
-    //      ]
+    //      "sublimegdb_executable": "./your_executable_name"
     // }
     //
     "workingdir": "/tmp",
-
-    "commandline":
-    [
-        "gdb",
-        "--interpreter=mi", // NOTE: This MUST be here for the plugin to work
-        "./executable"
-    ],
+    "executable": "./executable",
     "exec_cmd": "-exec-run",
 
     "layout":

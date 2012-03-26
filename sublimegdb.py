@@ -57,6 +57,12 @@ gdb_process = None
 gdb_stack_frame = None
 gdb_stack_index = 0
 
+gdb_nonstop = True
+
+if os.name == 'nt':
+    gdb_nonstop = False
+
+
 gdb_run_status = None
 result_regex = re.compile("(?<=\^)[^,\"]*")
 
@@ -900,7 +906,11 @@ def resume():
 
 
 def insert_breakpoint(filename, line):
-    cmd = "-break-insert %s:%d" % (filename, line)
+    # Attempt to simplify file paths for windows. As some versions of gdb choke on drive specifiers
+    if os.name == 'nt':
+        filename=os.path.relpath(filename,get_setting('sourcedir'))
+
+    cmd = "-break-insert \"'%s':%d\"" % (filename, line)
     out = run_cmd(cmd, True)
     if get_result(out) == "error":
         return None, 0
@@ -1140,8 +1150,8 @@ class GdbLaunch(sublime_plugin.WindowCommand):
         global gdb_run_status
         if gdb_process == None or gdb_process.poll() != None:
             os.chdir(get_setting("workingdir", "/tmp"))
-            commandline = get_setting("commandline")
-            gdb_process = subprocess.Popen(commandline, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+            executable = get_setting("executable")
+            gdb_process = subprocess.Popen(["gdb","--interpreter=mi",executable], shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 
             w = sublime.active_window()
             w.set_layout(
@@ -1177,7 +1187,8 @@ It seems you're not running gdb with the "mi" interpreter. Please add
 
             run_cmd("-gdb-set target-async 1")
             run_cmd("-gdb-set pagination off")
-            run_cmd("-gdb-set non-stop on")
+            if gdb_nonstop:
+                run_cmd("-gdb-set non-stop on")
 
             sync_breakpoints()
             gdb_run_status = "running"
