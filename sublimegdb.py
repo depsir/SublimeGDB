@@ -1152,7 +1152,7 @@ class GdbLaunch(sublime_plugin.WindowCommand):
         if gdb_process == None or gdb_process.poll() != None:
             os.chdir(get_setting("workingdir", "/tmp"))
             executable = get_setting("executable")
-            gdb_process = subprocess.Popen(["gdb","--interpreter=mi",executable], shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+            gdb_process = subprocess.Popen(["gdb","--interpreter=mi",executable], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 
             w = sublime.active_window()
             #back up current layout before opening the debug one
